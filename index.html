@@ -1,0 +1,150 @@
+!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANTARA-VPN Pro</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Icones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- En-tête -->
+        <header>
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i> ANTARA<span>VPN</span>
+            </div>
+            <div class="hwid-badge" id="hwidDisplay">HWID: Chargement...</div>
+        </header>
+
+        <!-- Navigation Onglets -->
+        <nav class="tabs">
+            <button class="tab-btn active" onclick="switchTab('connect')"><i class="fas fa-link"></i> Connecter</button>
+            <button class="tab-btn" onclick="switchTab('servers')"><i class="fas fa-globe"></i> Serveurs</button>
+            <button class="tab-btn" onclick="switchTab('settings')"><i class="fas fa-cog"></i> Params</button>
+            <button class="tab-btn" onclick="switchTab('tools')"><i class="fas fa-tools"></i> Outils</button>
+        </nav>
+
+        <!-- Contenu Principal -->
+        <main>
+            <!-- TAB: CONNECTER -->
+            <section id="connect" class="tab-content active">
+                <div class="status-card">
+                    <div class="circle-container" id="vpnCircle">
+                        <i class="fas fa-power-off" id="vpnIcon"></i>
+                    </div>
+                    <h2 id="statusText">Déconnecté</h2>
+                    <p id="serverInfo">Sélectionnez un serveur</p>
+                </div>
+
+                <div class="quick-stats">
+                    <div class="stat-box">
+                        <span>Latence</span>
+                        <strong id="pingVal">-- ms</strong>
+                    </div>
+                    <div class="stat-box">
+                        <span>Upload</span>
+                        <strong id="upVal">0 KB/s</strong>
+                    </div>
+                    <div class="stat-box">
+                        <span>Download</span>
+                        <strong id="downVal">0 KB/s</strong>
+                    </div>
+                </div>
+
+                <button class="btn-primary large" id="mainConnectBtn" onclick="toggleConnection()">SE CONNECTER</button>
+            </section>
+
+            <!-- TAB: SERVEURS -->
+            <section id="servers" class="tab-content">
+                <div class="search-bar">
+                    <input type="text" placeholder="Rechercher un pays..." id="serverSearch">
+                </div>
+                <div class="server-list" id="serverListContainer">
+                    <!-- Généré par JS -->
+                </div>
+            </section>
+
+            <!-- TAB: PARAMETRES COMPLETS -->
+            <section id="settings" class="tab-content">
+                <div class="settings-group">
+                    <h3><i class="fas fa-network-wired"></i> Protocole</h3>
+                    <select id="protocolSelect">
+                        <option value="wireguard">WireGuard (Ultra Rapide)</option>
+                        <option value="openvpn_udp">OpenVPN UDP</option>
+                        <option value="openvpn_tcp">OpenVPN TCP (Stable)</option>
+                        <option value="ikev2">IKEv2 (Mobile)</option>
+                    </select>
+                </div>
+
+                <div class="settings-group">
+                    <h3><i class="fas fa-map-marker-alt"></i> Comportement</h3>
+                    <label class="switch-row">
+                        <span>Auto-Connect au démarrage</span>
+                        <input type="checkbox" id="autoConnect">
+                    </label>
+                    <label class="switch-row">
+                        <span>Kill Switch (Couper internet si déconnecté)</span>
+                        <input type="checkbox" id="killSwitch" checked>
+                    </label>
+                    <label class="switch-row">
+                        <span>Auto Server (Meilleure latence)</span>
+                        <input type="checkbox" id="autoServer" onchange="enableAutoServer()">
+                    </label>
+                </div>
+
+                <div class="settings-group">
+                    <h3><i class="fas fa-lock"></i> Sécurité & DNS</h3>
+                    <label class="switch-row">
+                        <span>DNS Fiables (Antipub)</span>
+                        <input type="checkbox" id="dnsFilter" checked>
+                    </label>
+                    <label class="switch-row">
+                        <span>Chiffrage AES-256</span>
+                        <input type="checkbox" disabled checked>
+                    </label>
+                </div>
+                
+                <div class="settings-group">
+                     <h3><i class="fas fa-palette"></i> Apparence</h3>
+                     <select id="themeSelect">
+                         <option value="dark">Dark Mode (Par défaut)</option>
+                         <option value="light">Light Mode</option>
+                     </select>
+                </div>
+            </section>
+
+            <!-- TAB: OUTILS (HWID, IMPORT, EXPORT) -->
+            <section id="tools" class="tab-content">
+                <div class="tool-card">
+                    <h3><i class="fas fa-fingerprint"></i> Identifiant Matériel (HWID)</h3>
+                    <p>Ce code est unique à votre appareil.</p>
+                    <div class="hwid-display-box">
+                        <code id="hwidCode">Calcul en cours...</code>
+                    </div>
+                    <button class="btn-small" onclick="copyHwid()"><i class="fas fa-copy"></i> Copier</button>
+                </div>
+
+                <div class="tool-card">
+                    <h3><i class="fas fa-file-import"></i> Configuration</h3>
+                    <div class="action-buttons">
+                        <button class="btn-secondary" onclick="exportConfig()"><i class="fas fa-download"></i> Exporter Config (.atrs)</button>
+                        <button class="btn-secondary" onclick="document.getElementById('fileInput').click()"><i class="fas fa-upload"></i> Importer Config</button>
+                        <input type="file" id="fileInput" hidden accept=".atrs,.json" onchange="importConfig(this)">
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <h3><i class="fas fa-server"></i> Hosts Manuels</h3>
+                    <textarea id="manualHosts" placeholder="Ex: 127.0.0.1 google.com" rows="3"></textarea>
+                    <button class="btn-small" onclick="applyHosts()">Appliquer Hosts</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
