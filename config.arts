@@ -1,0 +1,16 @@
+json
+
+Télécharger
+
+Copier
+{
+    "version": "1.0",
+    "hwid": "ANT-XyZ123AbCdEf",
+    "settings": {
+        "protocol": "wireguard",
+        "killSwitch": true,
+        "dns": true,
+        "autoConnect": false
+    },
+    "lastServer": "fr1"
+}
